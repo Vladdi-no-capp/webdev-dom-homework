@@ -65,7 +65,64 @@
 
   <script>
     "use strict";
-    // Код писать здесь
-    console.log("It works!");
+    const button = document.querySelector(".add-form-button");
+    const placeholderText = document.querySelector(".add-form-text");
+    const placeholderName = document.querySelector(".add-form-name");
+    const comments = document.querySelector(".comments");
+  
+
+    button.addEventListener("click", () => {
+      if (placeholderName.value ==="" || placeholderText.value ==="") {
+        return;
+        
+      }
+      const now = new Date();
+      const day = String(now.getDate()).padStart(2,"0");
+      const month = String(now.getMonth()+1).padStart(2,"0");
+      const fullYear = now.getFullYear();
+      const shortYear = String(fullYear).slice(-2);
+      const hours = String(now.getHours()).padStart(2,"0");
+      const minutes = String(now.getMinutes()).padStart(2,"0");
+      const formatedDate = `${day}.${month}.${shortYear} ${hours}:${minutes}`;
+      
+      const oldHtml = comments.innerHTML;
+
+      comments.innerHTML = oldHtml + `
+        <li class="comment">
+          <div class="comment-header">
+            <div>${placeholderName.value}</div>
+            <div>${formatedDate}</div>
+          </div>
+
+          <div class="comment-body">
+            <div class="comment-text">
+              ${placeholderText.value}
+            </div>
+          </div>
+
+          <div class="comment-footer">
+            <div class="likes">
+              <span class="likes-counter">0</span>
+              <button class="like-button "></button>
+            </div>
+          </div>
+        </li>`;
+      placeholderName.value ="";
+      placeholderText.value ="";
+    });
+
+ comments.addEventListener("click", (event) => {
+  if (event.target.classList.contains("like-button")) {
+    const isLiked = event.target.classList.toggle("-active-like");
+    const counter = event.target.previousElementSibling;
+    const currentCount = Number(counter.textContent);
+
+    if (isLiked) {
+      counter.textContent = currentCount + 1;
+    } else {
+      counter.textContent = currentCount - 1;
+    }
+  }
+});
   </script>
 </html>
