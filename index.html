@@ -11,7 +11,7 @@
       <ul class="comments">
         <li class="comment">
           <div class="comment-header">
-            <div>Глеб Фокин</div>
+            <div class="comment-author">Глеб Фокин</div>
             <div>12.02.22 12:18</div>
           </div>
           <div class="comment-body">
@@ -28,7 +28,7 @@
         </li>
         <li class="comment">
           <div class="comment-header">
-            <div>Варвара Н.</div>
+            <div class="comment-author">Варвара Н.</div>
             <div>13.02.22 19:22</div>
           </div>
           <div class="comment-body">
@@ -63,66 +63,116 @@
     </div>
   </body>
 
+
   <script>
-    "use strict";
-    const button = document.querySelector(".add-form-button");
-    const placeholderText = document.querySelector(".add-form-text");
-    const placeholderName = document.querySelector(".add-form-name");
-    const comments = document.querySelector(".comments");
-  
+  "use strict";
 
-    button.addEventListener("click", () => {
-      if (placeholderName.value ==="" || placeholderText.value ==="") {
-        return;
-        
-      }
-      const now = new Date();
-      const day = String(now.getDate()).padStart(2,"0");
-      const month = String(now.getMonth()+1).padStart(2,"0");
-      const fullYear = now.getFullYear();
-      const shortYear = String(fullYear).slice(-2);
-      const hours = String(now.getHours()).padStart(2,"0");
-      const minutes = String(now.getMinutes()).padStart(2,"0");
-      const formatedDate = `${day}.${month}.${shortYear} ${hours}:${minutes}`;
-      
-      const oldHtml = comments.innerHTML;
+  const button = document.querySelector(".add-form-button");
+  const placeholderText = document.querySelector(".add-form-text");
+  const placeholderName = document.querySelector(".add-form-name");
+  const comments = document.querySelector(".comments");
 
-      comments.innerHTML = oldHtml + `
+  const sanitizeHtml = (value) => {
+    return value
+      .replaceAll("&", "&amp;")
+      .replaceAll("<", "&lt;")
+      .replaceAll(">", "&gt;")
+      .replaceAll('"', "&quot;")
+      .replaceAll("'", "&#039;");
+  };
+
+  button.addEventListener("click", () => {
+    const name = placeholderName.value.trim();
+    const text = placeholderText.value.trim();
+
+    if (name === "" || text === "") {
+      return;
+    }
+
+    const safeName = sanitizeHtml(name);
+    const safeText = sanitizeHtml(text);
+
+    const now = new Date();
+
+    const day = String(now.getDate()).padStart(2, "0");
+    const month = String(now.getMonth() + 1).padStart(2, "0");
+    const year = String(now.getFullYear()).slice(-2);
+    const hours = String(now.getHours()).padStart(2, "0");
+    const minutes = String(now.getMinutes()).padStart(2, "0");
+
+    const formattedDate =
+      `${day}.${month}.${year} ${hours}:${minutes}`;
+
+    comments.insertAdjacentHTML(
+      "beforeend",
+      `
         <li class="comment">
           <div class="comment-header">
-            <div>${placeholderName.value}</div>
-            <div>${formatedDate}</div>
+            <div class="comment-author">${safeName}</div>
+            <div>${formattedDate}</div>
           </div>
 
           <div class="comment-body">
-            <div class="comment-text">
-              ${placeholderText.value}
-            </div>
+            <div class="comment-text">${safeText}</div>
           </div>
 
           <div class="comment-footer">
             <div class="likes">
               <span class="likes-counter">0</span>
-              <button class="like-button "></button>
+              <button class="like-button"></button>
             </div>
           </div>
-        </li>`;
-      placeholderName.value ="";
-      placeholderText.value ="";
-    });
+        </li>
+      `,
+    );
 
- comments.addEventListener("click", (event) => {
-  if (event.target.classList.contains("like-button")) {
-    const isLiked = event.target.classList.toggle("-active-like");
-    const counter = event.target.previousElementSibling;
-    const currentCount = Number(counter.textContent);
+    placeholderName.value = "";
+    placeholderText.value = "";
+  });
 
-    if (isLiked) {
-      counter.textContent = currentCount + 1;
-    } else {
-      counter.textContent = currentCount - 1;
+  comments.addEventListener("click", (event) => {
+    const likeButton = event.target.closest(".like-button");
+
+    if (likeButton) {
+      event.stopPropagation();
+
+      const counter = likeButton.querySelector(
+        ".likes-counter",
+      ) || likeButton.previousElementSibling;
+
+      const currentCount = Number(counter.textContent);
+      const isLiked =
+        likeButton.classList.toggle("-active-like");
+
+      if (isLiked) {
+        counter.textContent = currentCount + 1;
+      } else {
+        counter.textContent = currentCount - 1;
+      }
+
+      return;
     }
-  }
-});
+
+    const comment = event.target.closest(".comment");
+
+    if (!comment) {
+      return;
+    }
+
+    const author = comment
+      .querySelector(".comment-author, .comment-header div:first-child")
+      .textContent
+      .trim();
+
+    const text = comment
+      .querySelector(".comment-text")
+      .textContent
+      .trim();
+
+    placeholderText.value = `> ${author}: ${text}\n\n`;
+    placeholderText.focus();
+  });
+</script>
   </script>
 </html>
+
