@@ -3,8 +3,8 @@ import { postComment } from './comments.js'
 import { fetchRenderComments } from './fetchAndRenderComments.js'
 
 const button = document.querySelector('.add-form-button')
-const placeholderText = document.querySelector('.add-form-text')
-const placeholderName = document.querySelector('.add-form-name')
+export const placeholderText = document.querySelector('.add-form-text')
+export const placeholderName = document.querySelector('.add-form-name')
 const comments = document.querySelector('.comments')
 const addForm = document.querySelector('.add-form')
 const addFormLoading = document.querySelector('.add-form-loading')
@@ -13,16 +13,17 @@ button.addEventListener('click', () => {
     const newComment = {
         name: placeholderName.value.trim(),
         text: placeholderText.value.trim(),
+        forceError: true,
     }
 
-    if (newComment.name === '' || newComment.text === '') {
+    if (newComment.name.length < 3 || newComment.text.length < 3) {
+        alert('Имя и комментарий должны быть не короче 3 символов')
         return
     }
 
     button.disabled = true
     addForm.hidden = true
     addFormLoading.hidden = false
-    button.disabled = true
 
     postComment(newComment)
         .then(() => {
@@ -33,12 +34,23 @@ button.addEventListener('click', () => {
             placeholderText.value = ''
         })
         .catch((error) => {
-            console.error('Ошибка:', error)
+            if (error.message === 'SERVER_ERROR') {
+                alert('Сервер сломался, попробуй позже')
+                return
+            }
+
+            if (error.message === 'VALIDATION_ERROR') {
+                alert('Имя и комментарий должны быть не короче 3 символов')
+                return
+            }
+
+            alert('Кажется, у вас сломался интернет, попробуйте позже')
         })
         .finally(() => {
             addForm.hidden = false
             addFormLoading.hidden = true
             button.disabled = false
+            button.textContent = 'Добавить'
         })
 })
 
@@ -50,5 +62,10 @@ comments.innerHTML = `
     </li>`
 
 fetchRenderComments(comments).catch((error) => {
-    console.error('Не удалось загрузить комментарии:', error)
+    if (error.message === 'SERVER_ERROR') {
+        alert('Сервер сломался, попробуй позже')
+        return
+    }
+
+    alert('Кажется, у вас сломался интернет, попробуйте позже')
 })

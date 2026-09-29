@@ -10,6 +10,10 @@ export const getComments = () => {
         method: 'GET',
     })
         .then((response) => {
+            if (response.status === 500) {
+                throw new Error('SERVER_ERROR')
+            }
+
             return response.json()
         })
         .then((data) => {
@@ -29,7 +33,17 @@ export const postComment = (newComment) => {
         body: JSON.stringify(newComment),
     })
         .then((response) => {
-            return response.json()
+            if (response.status === 201) {
+                return response.json()
+            }
+
+            if (response.status === 500) {
+                throw new Error('SERVER_ERROR')
+            }
+
+            if (response.status === 400) {
+                throw new Error('VALIDATION_ERROR')
+            }
         })
         .then((data) => {
             if (data.error) {
