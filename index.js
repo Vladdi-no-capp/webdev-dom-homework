@@ -1,5 +1,5 @@
 import { initCommentActions } from './JS TRIGGERS/button.js'
-import { postComment } from './comments.js'
+import { postComment } from './api.js'
 import { fetchRenderComments } from './fetchAndRenderComments.js'
 
 const button = document.querySelector('.add-form-button')
@@ -22,7 +22,6 @@ button.addEventListener('click', () => {
     button.disabled = true
     addForm.hidden = true
     addFormLoading.hidden = false
-    button.disabled = true
 
     postComment(newComment)
         .then(() => {

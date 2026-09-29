@@ -1,8 +1,12 @@
+import { getComments } from './api.js'
 import { renderComments } from './JS TRIGGERS/function.js'
-import { getComments } from './comments.js'
+import { commentsFor, updateComments } from './comments.js'
 
 export const fetchRenderComments = (commentsElement) => {
-    return getComments().then((loadedComments) => {
-        renderComments(commentsElement, loadedComments)
+    return getComments().then((data) => {
+        const loadedComments = data.comments
+
+        updateComments(loadedComments)
+        renderComments(commentsElement, commentsFor)
     })
 }
