@@ -39,7 +39,7 @@ const formatCommentDate = (value) => {
 export const renderComments = (commentsElement, commentsData) => {
     commentsElement.innerHTML = commentsData
         .map((comment) => {
-            const safeName = sanitizeHtml(String(comment.name ?? ''))
+            const safeName = sanitizeHtml(String(comment.author?.name ?? ''))
             const safeText = sanitizeHtml(String(comment.text ?? ''))
             const formattedDate = formatCommentDate(comment.date)
             const likes = Number(comment.likes) || 0

@@ -20,9 +20,20 @@ body {
     padding: 0;
     list-style: none;
 }
+.comments-loading {
+    text-align: center;
+    font-size: 24px;
+}
+.add-form-loading {
+    padding: 20px;
+    margin-top: 48px;
+    text-align: center;
+    font-size: 24px;
+}
 
 .comment,
-.add-form {
+.add-form,
+.add-form-loading {
     width: 596px;
     box-sizing: border-box;
     background: radial-gradient(

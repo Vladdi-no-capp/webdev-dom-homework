@@ -1,17 +1,13 @@
 import { initCommentActions } from './JS TRIGGERS/button.js'
-import { renderComments } from './JS TRIGGERS/function.js'
-import { getComments, personalKey } from './comments.js'
+import { postComment } from './comments.js'
+import { fetchRenderComments } from './fetchAndRenderComments.js'
 
 const button = document.querySelector('.add-form-button')
 const placeholderText = document.querySelector('.add-form-text')
 const placeholderName = document.querySelector('.add-form-name')
 const comments = document.querySelector('.comments')
-
-const loadAndRenderComments = () => {
-    return getComments().then((loadedComments) => {
-        renderComments(comments, loadedComments)
-    })
-}
+const addForm = document.querySelector('.add-form')
+const addFormLoading = document.querySelector('.add-form-loading')
 
 button.addEventListener('click', () => {
     const newComment = {
@@ -24,20 +20,13 @@ button.addEventListener('click', () => {
     }
 
     button.disabled = true
+    addForm.hidden = true
+    addFormLoading.hidden = false
+    button.disabled = true
 
-    fetch(`https://wedev-api.sky.pro/api/v1/${personalKey}/comments`, {
-        method: 'POST',
-        body: JSON.stringify(newComment),
-    })
-        .then((response) => {
-            return response.json()
-        })
-        .then((data) => {
-            if (data.error) {
-                throw new Error(data.error)
-            }
-
-            return loadAndRenderComments()
+    postComment(newComment)
+        .then(() => {
+            return fetchRenderComments(comments)
         })
         .then(() => {
             placeholderName.value = ''
@@ -47,12 +36,19 @@ button.addEventListener('click', () => {
             console.error('Ошибка:', error)
         })
         .finally(() => {
+            addForm.hidden = false
+            addFormLoading.hidden = true
             button.disabled = false
         })
 })
 
 initCommentActions(comments, placeholderText)
 
-loadAndRenderComments().catch((error) => {
+comments.innerHTML = `
+    <li class="comment comments-loading">
+        Комментарии загружаются...
+    </li>`
+
+fetchRenderComments(comments).catch((error) => {
     console.error('Не удалось загрузить комментарии:', error)
 })
