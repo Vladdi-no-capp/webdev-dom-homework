@@ -1,6 +1,7 @@
 import { initCommentActions } from './JS TRIGGERS/button.js'
-import { postComment } from './api.js'
-import { fetchRenderComments } from './fetchAndRenderComments.js'
+import { getComments, postComment } from './api.js'
+import { commentsFor, updateComments } from './comments.js'
+import { renderComments } from './JS TRIGGERS/function.js'
 
 const button = document.querySelector('.add-form-button')
 const placeholderText = document.querySelector('.add-form-text')
@@ -24,8 +25,10 @@ button.addEventListener('click', () => {
     addFormLoading.hidden = false
 
     postComment(newComment)
-        .then(() => {
-            return fetchRenderComments(comments)
+        .then(() => getComments())
+        .then((data) => {
+            updateComments(data.comments)
+            renderComments(comments, commentsFor)
         })
         .then(() => {
             placeholderName.value = ''
@@ -48,6 +51,11 @@ comments.innerHTML = `
         Комментарии загружаются...
     </li>`
 
-fetchRenderComments(comments).catch((error) => {
-    console.error('Не удалось загрузить комментарии:', error)
-})
+getComments()
+    .then((data) => {
+        updateComments(data.comments)
+        renderComments(comments, commentsFor)
+    })
+    .catch((error) => {
+        console.error('Не удалось загрузить комментарии:', error)
+    })
