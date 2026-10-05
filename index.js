@@ -1,6 +1,7 @@
 import { initCommentActions } from './JS TRIGGERS/button.js'
-import { postComment } from './comments.js'
-import { fetchRenderComments } from './fetchAndRenderComments.js'
+import { renderComments } from './JS TRIGGERS/function.js'
+import { getComments, postComment } from './api.js'
+import { commentsFor, updateComments } from './comments.js'
 
 const button = document.querySelector('.add-form-button')
 export const placeholderText = document.querySelector('.add-form-text')
@@ -26,8 +27,10 @@ button.addEventListener('click', () => {
     addFormLoading.hidden = false
 
     postComment(newComment)
-        .then(() => {
-            return fetchRenderComments(comments)
+        .then(() => getComments())
+        .then((loadedComments) => {
+            updateComments(loadedComments)
+            renderComments(comments, commentsFor)
         })
         .then(() => {
             placeholderName.value = ''
@@ -61,11 +64,16 @@ comments.innerHTML = `
         Комментарии загружаются...
     </li>`
 
-fetchRenderComments(comments).catch((error) => {
-    if (error.message === 'SERVER_ERROR') {
-        alert('Сервер сломался, попробуй позже')
-        return
-    }
+getComments()
+    .then((loadedComments) => {
+        updateComments(loadedComments)
+        renderComments(comments, commentsFor)
+    })
+    .catch((error) => {
+        if (error.message === 'SERVER_ERROR') {
+            alert('Сервер сломался, попробуй позже')
+            return
+        }
 
-    alert('Кажется, у вас сломался интернет, попробуйте позже')
-})
+        alert('Кажется, у вас сломался интернет, попробуйте позже')
+    })
