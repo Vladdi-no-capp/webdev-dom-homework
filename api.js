@@ -1,5 +1,22 @@
 const personalKey = 'Vladislav Mordovskiy'
-const commentsUrl = `https://wedev-api.sky.pro/api/v1/${personalKey}/comments`
+const commentsUrl = `https://wedev-api.sky.pro/api/v2/${personalKey}/comments`
+const loginUrl = 'https://wedev-api.sky.pro/api/user/login'
+
+export const loginUser = ({ login, password }) => {
+    return fetch(loginUrl, {
+        method: 'POST',
+        body: JSON.stringify({
+            login,
+            password,
+        }),
+    }).then((response) => {
+        if (response.status === 400) {
+            throw new Error('WRONG_LOGIN_OR_PASSWORD')
+        }
+
+        return response.json()
+    })
+}
 
 const checkResponse = (response) => {
     if (response.status === 500) {
@@ -28,13 +45,15 @@ export const getComments = () => {
         .then((data) => data.comments)
 }
 
-export const postComment = (newComment) => {
+export const postComment = ({ text, token }) => {
     return fetch(commentsUrl, {
         method: 'POST',
         headers: {
-            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify(newComment),
+        body: JSON.stringify({
+            text,
+        }),
     })
         .then(checkResponse)
         .then(checkResponseData)

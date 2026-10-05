@@ -1,6 +1,9 @@
 body {
     margin: 0;
 }
+[hidden] {
+    display: none !important;
+}
 
 .container {
     font-family: Helvetica;
@@ -29,6 +32,78 @@ body {
     margin-top: 48px;
     text-align: center;
     font-size: 24px;
+}
+.login-link {
+    color: #ffffff;
+    margin-top: 24px;
+    font-size: 24px;
+    padding: 10px 20px;
+    background: linear-gradient(270deg, #7334ea, #a234ea, #1e1b4b, #7334ea);
+    animation: gradientFlow 6s ease infinite;
+    transition:
+        transform 0.2s ease,
+        box-shadow 0.2s ease;
+    border: none;
+    border-radius: 18px;
+    cursor: pointer;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(221, 36, 118, 0.4);
+    @keyframes gradientFlow {
+        0% {
+            background-position: 0% 50%;
+        }
+        50% {
+            background-position: 100% 50%;
+        }
+        100% {
+            background-position: 0% 50%;
+        }
+    }
+}
+.login-link:hover {
+    background-size: 400% 400% !important;
+    background-position: 0% 50%;
+
+    transition:
+        transform 0.2s,
+        box-shadow 0.2s;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(115, 52, 234, 0.4);
+    animation: gradientFlow 3s ease infinite !important;
+}
+@keyframes gradientFlow {
+    0% {
+        background-position: 0% 50%;
+    }
+    50% {
+        background-position: 100% 50%;
+    }
+    100% {
+        background-position: 0% 50%;
+    }
+}
+
+.login-page {
+    padding: 14px 28px;
+    font-size: 16px;
+    font-weight: 600;
+    color: #ffffff;
+    border: none;
+    border-radius: 30px;
+    cursor: pointer;
+    background: linear-gradient(270deg, #7334ea, #a234ea, #1e1b4b, #7334ea);
+
+    background-size: 400% 400%;
+    animation: gradientFlow 6s ease infinite;
+    transition:
+        transform 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
+.login-message {
+    margin-top: 24px;
+    font-size: 24px;
+    text-align: center;
 }
 
 .comment,
